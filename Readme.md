@@ -48,4 +48,10 @@ $ yarn start
     * The chunks filename remains the same unless its source code changes. So we're taking advantage of the browser's cache. Courtesy of webpack's `contenthash` feature;
     * You can share common dependencies like `react` in a vendor bundle keeping your components chunks small and avoiding duplicated code;
     * The vendor package is not splitted because it's just a demo. A good way of split it is making dozens of small chunks in case your http-server is powered by HTTP/2.
-    
+
+
+## Monorepo Structure
+
+- apps/      # 可运行、可部署的应用（不放可复用业务）
+- packages/  # 可复用能力（domain / ui / infra / utils）
+- tooling/   # 构建系统 & 工程工具（webpack / CRA / lint）

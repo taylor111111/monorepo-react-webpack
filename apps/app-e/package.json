@@ -6,9 +6,9 @@
 
   },
   "scripts": {
-    "start": "node ../../packages/base-config/scripts/start.js",
-    "build": "node ../../packages/base-config/scripts/build.js",
-    "test": "node ../../packages/base-config/scripts/test.js"
+    "start": "node ../../tooling/cra-config/scripts/start.js",
+    "build": "node ../../tooling/cra-config/scripts/build.js",
+    "test": "node ../../tooling/cra-config/scripts/test.js"
   },
   "devDependencies": {
   },
