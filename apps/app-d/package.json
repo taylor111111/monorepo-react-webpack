@@ -1,14 +1,14 @@
 {
-  "name": "@fta/app-e",
+  "name": "@fta/app-d",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-
+    "@repo/domain-user": "*"
   },
   "scripts": {
-    "start": "node ../base-config/scripts/start.js",
-    "build": "node ../base-config/scripts/build.js",
-    "test": "node ../base-config/scripts/test.js"
+    "start": "node ../../tooling/cra-config/scripts/start.js",
+    "build": "node ../../tooling/cra-config/scripts/build.js",
+    "test": "node ../../tooling/cra-config/scripts/test.js"
   },
   "devDependencies": {
   },

@@ -1,14 +1,14 @@
 {
-  "name": "@fta/app-d",
+  "name": "@fta/app-e",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
 
   },
   "scripts": {
-    "start": "node ../base-config/scripts/start.js",
-    "build": "node ../base-config/scripts/build.js",
-    "test": "node ../base-config/scripts/test.js"
+    "start": "node ../../packages/base-config/scripts/start.js",
+    "build": "node ../../packages/base-config/scripts/build.js",
+    "test": "node ../../packages/base-config/scripts/test.js"
   },
   "devDependencies": {
   },
