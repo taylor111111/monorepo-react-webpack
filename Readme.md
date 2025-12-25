@@ -1,57 +1,173 @@
-# A Monorepo Modular React App powered by Webpack code splitting and Yarn Workspaces
+# Monorepo Modular React Apps (CRA + Webpack + Yarn Workspaces)
 
-> This project gives you an option of how to configure a monorepo for a modular React App and use webpack to generate a single chunk for each package.
+This repository is a **real-world example of using a monorepo to build multiple React applications that share business logic**, without publishing internal npm packages or duplicating code.
 
-Feel free to ask and make PR's 👍
+The core idea is simple:
+
+> **Apps focus on product and UI.  
+> Packages focus on reusable domain logic.  
+> Tooling focuses on build infrastructure.**
+
+---
+
+## Why this Monorepo
+
+In many projects, multiple applications need to share the same business logic (for example: user models, permission rules, or data-fetching conventions).
+
+Common alternatives and their problems:
+
+- ❌ Copy-paste code → hard to maintain
+- ❌ Publish private npm packages → heavy workflow and version management
+- ❌ Tight coupling between apps → fragile architecture
+
+This monorepo solves the problem by **co-locating apps and shared domain packages in a single repository**, while keeping **clear dependency boundaries**.
+
+---
 
 ## Tech Stack
-* React 18.2.0
-* Webpack 5.78.0
-* Yarn (and yarn workspaces)
 
-## Requirements
-* Node v16.20.1
-* Yarn v1.22.19
+- React 18
+- Webpack 5 (customized CRA tooling)
+- Yarn v1 Workspaces
+- Node.js v16
 
-## Packages
-* `app-d`, and `app-e`: These two packages are like business modules. You can dev and run them standalone but in the production they are instantiated by the `root-app`;
-* `base-config`: A shared module that provides tooling and general config.
+---
 
+## Repository Structure
+
+```
+.
+├── apps/        # Runnable applications (product shells)
+│   ├── app-d
+│   └── app-e
+│
+├── packages/    # Reusable capabilities (business logic)
+│   └── domain-user
+│
+├── tooling/     # Build system & engineering tools
+│   └── cra-config
+│
+├── scripts/     # Repo-level scripts (build, generators)
+└── package.json # Workspace root & shared runtime deps
+```
+
+### apps/
+
+Each folder under `apps/` is a **standalone React application**:
+
+- Can be developed and run independently
+- Contains routing, UI, and product-specific logic
+- **Must NOT contain reusable business rules**
+
+Examples:
+- `app-d`: Uses user domain data + permission rules
+- `app-e`: Uses user domain data only (read-only view)
+
+---
+
+### packages/
+
+Packages represent **shared, reusable capabilities**.
+
+They:
+- Contain domain logic and business rules
+- Have no dependency on specific apps
+- Are consumed by multiple apps via Yarn workspaces
+
+#### Example: `@repo/domain-user`
+
+This package defines:
+- How to fetch a user
+- What a user means
+- Business rules such as permission checks
+
+Changing logic here automatically affects **all apps that depend on it**.
+
+---
+
+### tooling/
+
+`tooling/` contains **build infrastructure**, not application code:
+
+- Custom CRA + Webpack configuration
+- Babel, loaders, dev-server, etc.
+
+The tooling layer is intentionally isolated so it can be replaced later (e.g. Vite, Rspack, Next.js) without touching business logic.
+
+---
 
 ## Setup
+
+Install dependencies once at the repo root:
+
+```bash
+yarn install
 ```
-$ yarn install
+
+Yarn workspaces will hoist shared dependencies and link internal packages automatically.
+
+---
+
+## Running Apps in Development
+
+Each app can be run independently:
+
+```bash
+yarn workspace app-d start
+yarn workspace app-e start
 ```
+
+Hot reloading is enabled.
+
+---
 
 ## Building
 
+Build all applications using the shared tooling:
+
+```bash
+sh scripts/build.sh
 ```
-$ sh scripts/build.sh
+
+Each app is built independently, but shares cached dependencies and tooling.
+
+---
+
+## Demonstrating the Value of Monorepo
+
+This repo intentionally includes **two apps using the same domain package differently**:
+
+- `app-d`: Displays user data and checks access permissions
+- `app-e`: Displays user identity only
+
+Both apps depend on:
+
+```js
+@repo/domain-user
 ```
 
+Modify a business rule in `packages/domain-user`, and both apps update immediately — **without publishing, versioning, or duplication**.
 
-## Running `App-D` and `App-E` standalone
-You can run the business modules standalone in dev mode.
-```
-$ cd packages/app-d
-$ yarn start
-```
-> Live reloading is enabled
+---
 
-## Keep in mind
-  * `Yarn Workspaces` is the key that makes the development experience better:
-    * You can keep the root `package.json` free of dependencies. Eventually, you can put some global tools there like Lerna but those shared dev dependencies like webpack go inside the `base-config` package.
-    * Yarn workspaces will take care about making the `base-config` binaries accessible inside the packages that depend on it;
-    * Almost all dependencies will be hosted inside the root _node_modules_ saving a lot of disk space and internet connection.
-  * `Webpack` enables you to do whatever you want with your bundling as we've done here:
-    * Generating 1 chunk file per package.
-    * The chunks filename remains the same unless its source code changes. So we're taking advantage of the browser's cache. Courtesy of webpack's `contenthash` feature;
-    * You can share common dependencies like `react` in a vendor bundle keeping your components chunks small and avoiding duplicated code;
-    * The vendor package is not splitted because it's just a demo. A good way of split it is making dozens of small chunks in case your http-server is powered by HTTP/2.
+## Design Principles
 
+- Apps depend on packages, never the other way around
+- Domain logic lives in one place
+- Tooling is replaceable
+- Dependencies are placed according to responsibility
 
-## Monorepo Structure
+---
 
-- apps/      # 可运行、可部署的应用（不放可复用业务）
-- packages/  # 可复用能力（domain / ui / infra / utils）
-- tooling/   # 构建系统 & 工程工具（webpack / CRA / lint）
+## Summary
+
+This repository demonstrates how to:
+
+- Structure a monorepo for multiple React apps
+- Share domain logic safely and cleanly
+- Avoid private npm packages for internal code
+- Keep build tooling isolated from business logic
+
+It is designed to be **readable, extensible, and production-oriented**, not just a demo.
+
+Feel free to explore, adapt, and build on top of it.
